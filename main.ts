@@ -1,4 +1,5 @@
 import * as fs from 'fs';
+import { exit } from 'process';
 const BUFSIZE = 256;
 const buf = Buffer.alloc(BUFSIZE);
 var bytesRead: number;
@@ -64,6 +65,22 @@ function printTest(testToPrint: test)
 		console.log(testToPrint.output[i]);
 }
 
+function printOutput(testToPrint: test)
+{
+	let out: string = '';
+	for (let i = 0; i < testToPrint.height; i++)
+	{	
+		for (let j = 0; j < testToPrint.width; j++)
+		{
+			out += testToPrint.output[i][j];
+			if (j !== testToPrint.width - 1)
+				out += " ";
+		}
+		console.log(out);
+		out = '';	
+	}
+}
+
 function validLine(lineCount: number, line: string, currLine: number, maxLines: number): boolean {
 	if (lineCount === 0) { // Gets the test size and should only be called once!
 	var endOfNumber: boolean = false;
@@ -82,12 +99,11 @@ function validLine(lineCount: number, line: string, currLine: number, maxLines: 
 		case 1:// gets the test width & height
 			test = {width: 0, height: 0, map: [], output: []};
 			var sizeArray: string[] = line.split(' ');
-			if (sizeArray.length !== 3)
-				return false;
 			var size: number = parseInt(sizeArray[0]);
 			var size2: number = parseInt(sizeArray[1]);
 			if (size < 1 || size > 182 || size2 < 1 || size2 > 182)
 				return false;
+
 			test.height = size;
 			test.width = size2;
 			return (true);
@@ -105,7 +121,7 @@ function validLine(lineCount: number, line: string, currLine: number, maxLines: 
 			test.map.push(col);
 			if (currLine !== maxLines)
 				return (true);
-		case 3:// new line indicating end of test
+		case 3:// new line/ EOF indicating end of test
 			if(test.map.length === test.height)
 			{
 				// initialize output to 0
@@ -114,6 +130,8 @@ function validLine(lineCount: number, line: string, currLine: number, maxLines: 
 					let col: number[] = [];
 					for (let j = 0; j < test.width; j++)
 						col.push(0);
+					if (test.map[i].length !== test.width)
+						return (false);
 					test.output.push(col);
 				}
 				tests.push(test);
@@ -130,16 +148,16 @@ function getLineType(line: string): number
 	var i: number = 0;
 	if (line[0] === undefined)
 		return (3);
-	if (line[0] >= '0' && line[0] <= '9')
-	{
-		while(line[i] > '0' && line[i] < '9')
-			i++;
-		while(line[i] == ' ')
-			i++;
-		if(line[i] == undefined)
-			return 0;
-	}
-	i = 0;
+	// if (line[0] >= '0' && line[0] <= '9')
+	// {
+	// 	while(line[i] >= '0' && line[i] < '9')
+	// 		i++;
+	// 	while(line[i] == ' ')
+	// 		i++;
+	// 	if(line[i] == undefined)
+	// 		return 0;
+	// }
+	// i = 0;
 	    if(line[0] >= '0' && line[0] <= '9')
 		{
 			while(line[i] >= '0' && line[i] <= '9')
@@ -184,11 +202,16 @@ function findNearestWhite(testToRun: test, point: point)
 }
 input = stdinToString().split('\n');
 
-for (let i = 0; i < input.length; i++)
+validLine(0, input[0], 0, input.length -1);
+
+for (let i = 1; i < input.length; i++)
 {
 	let lineType: number = getLineType(input[i]);
 	if (validLine(lineType, input[i], i, input.length - 1) === false)
-		console.log('ERROR: invalid input');
+	{
+		console.log('ERROR: 1 or more tests are invalid!');
+		exit(1);
+	}
 }
 
 for (let i: number = 0; i < tests.length; i++)
@@ -196,5 +219,7 @@ for (let i: number = 0; i < tests.length; i++)
 	for (let y: number = 0; y < tests[i].height; y++)
 		for (let x: number = 0; x < tests[i].width; x++)
 			findNearestWhite(tests[i], {x: x, y: y});
-	printTest(tests[i]);
+	// printTest(tests[i]);
+	printOutput(tests[i]);
+	console.log("");
 }
