@@ -18,7 +18,7 @@ jobs:
       run: make < tests/input
       
     - name: Test1
-      run: make < input1
+      run: make < tests/test1
 
     - name: Test2
       run: make < tests/test2
