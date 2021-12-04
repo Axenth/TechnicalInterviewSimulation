@@ -263,9 +263,9 @@ for (let i = 1; i < input.length; i++)
 
 for (let i: number = 0; i < tests.length; i++)
 {
-	for (let y: number = 0; y < tests[0].height; y++)
-		for (let x: number = 0; x < tests[0].width; x++)
-			newFindNearestWhite(tests[0], {x: x, y: y});
+	for (let y: number = 0; y < tests[i].height; y++)
+		for (let x: number = 0; x < tests[i].width; x++)
+			newFindNearestWhite(tests[i], {x: x, y: y});
 	// printTest(tests[i]);
 	printOutput(tests[i]);
 	console.log("");
