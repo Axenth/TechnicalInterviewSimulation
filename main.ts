@@ -185,6 +185,48 @@ function getLineType(line: string): number
 	return (-1);
 }
 
+function newFindNearestWhite(testsToRun: test, point: point)
+{
+	var distance: number = Number.MAX_VALUE;
+	var sameLine: point = {x: 0, y: 0};
+	
+	for(let x: number = 0; x < testsToRun.width; x++)
+	{
+		if (testsToRun.map[point.y][x] === 1)
+		{
+			if (Math.abs(x - point.x) < distance)
+			{
+				distance = Math.abs(x - point.x);
+				sameLine.x = x;
+				sameLine.y = point.y;
+			}
+		}
+	}
+	for(let y: number = sameLine.y - distance; y < sameLine.y + distance; y++)
+	{
+		while (y < 0)
+			y++;
+		if (y === testsToRun.height)
+			break;
+		for(let x: number = sameLine.x - distance; x < sameLine.x + distance; x++)
+		{
+			while (x < 0)
+				x++;
+			if (x === testsToRun.width)
+				break;
+			if (testsToRun.map[y][x] === 1)
+			{
+				let newDistance: number = Math.abs(x - point.x) + Math.abs(y - point.y);
+				if (newDistance <= distance)
+				{
+					distance = newDistance;
+					testsToRun.output[point.y][point.x] = distance;
+				}
+			}
+		}
+	}
+}
+
 function findNearestWhite(testToRun: test, point: point)
 {
 	var max: number = Number.MAX_VALUE;
@@ -218,7 +260,7 @@ for (let i: number = 0; i < tests.length; i++)
 {
 	for (let y: number = 0; y < tests[i].height; y++)
 		for (let x: number = 0; x < tests[i].width; x++)
-			findNearestWhite(tests[i], {x: x, y: y});
+			newFindNearestWhite(tests[i], {x: x, y: y});
 	// printTest(tests[i]);
 	printOutput(tests[i]);
 	console.log("");
