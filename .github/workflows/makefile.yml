@@ -31,22 +31,29 @@ jobs:
 
     - name: InvalidTest1 (Incorrect amount of tests)
       run: make < tests/invalidTest1
+      continue-on-error: true
     
     - name: InvalidTest2 (Missing white dot on line)
       run: make < tests/invalidTest2
+      continue-on-error: true
       
     - name: InvalidTest3 (Incorrect map width)
       run: make < tests/invalidTest3
+      continue-on-error: true
 
     - name: InvalidTest4 (Incorrect map height)
       run: make < tests/invalidTest4
-      
+      continue-on-error: true
+
     - name: InvalidTest5 (Invalid map Width)
       run: make < tests/invalidTest5
+      continue-on-error: true
 
     - name: InvalidTest6 (Invalid map height)
       run: make < tests/invalidTest6
+      continue-on-error: true
 
     - name: InvalidTest7 (Invalid amount of tests)
       run: make < tests/invalidTest7
+      continue-on-error: true
       
