@@ -6,6 +6,7 @@
 - tsc for compilation
 - the fs module
 - tslib
+- @types/node
 
 ## How to run
 
