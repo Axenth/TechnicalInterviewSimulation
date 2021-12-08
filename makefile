@@ -17,6 +17,3 @@ clean:
 	rm -f $(NAME)
 
 re: clean all
-
-install:
-	-curl -fsSL https://deno.land/x/install/install.sh | sh

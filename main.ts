@@ -1,9 +1,6 @@
 import * as fs from 'fs';
 import { exit } from 'process';
-const BUFSIZE = 256;
-const buf = Buffer.alloc(BUFSIZE);
-var bytesRead: number;
-var stdin: string;
+
 var testSize: number;
 var input: string[];
 
@@ -26,6 +23,10 @@ var test : test;
 
 function stdinToString(): string
 {
+	var stdin: string;
+	var bytesRead: number;
+	const BUFSIZE: number = 256;
+	const buf: Buffer = Buffer.alloc(BUFSIZE);
 	stdin = '';
 	do // Loop as long as stdin input is available.
 	{
@@ -51,23 +52,12 @@ function stdinToString(): string
 	return stdin;
 }
 
-function printTest(testToPrint: test)
-{
-	console.log("WIDTH: " + testToPrint.width + " HEIGHT " + testToPrint.height);
-	console.log("input:");
-	for (let i = 0; i < testToPrint.height; i++)
-		console.log(testToPrint.map[i]);
-	console.log("output:");
-	for (let i = 0; i < testToPrint.height; i++)
-		console.log(testToPrint.output[i]);
-}
-
 function printOutput(testToPrint: test)
 {
 	let out: string = '';
-	for (let i = 0; i < testToPrint.height; i++)
+	for (let i: number = 0; i < testToPrint.height; i++)
 	{	
-		for (let j = 0; j < testToPrint.width; j++)
+		for (let j: number = 0; j < testToPrint.width; j++)
 		{
 			out += testToPrint.output[i][j];
 			if (j !== testToPrint.width - 1)
@@ -83,7 +73,7 @@ function validLine(lineCount: number, line: string, currLine: number, maxLines: 
 	if (lineCount === 0) // Gets the test size and should only be called once!
 	{
 		let endOfNumber: boolean = false;
-		for(let i = 0; i < line.length; i++)
+		for(let i: number = 0; i < line.length; i++)
 		{
 			if (line[i] === ' ') 
 				endOfNumber = true;
@@ -111,11 +101,7 @@ function validLine(lineCount: number, line: string, currLine: number, maxLines: 
 		let s: string[] = line.split("");
 		while(s[s.length - 1] === ' ')
 			s.pop();
-		let ArraySize: number = 0; // FIXME: this should be size of s now not this unnessecary loop
-		for (let i = 0; i < s.length; i++)
-			if (s[i] !== ' ')
-				ArraySize++;
-		if (ArraySize !== test.width)
+		if (s.length !== test.width)
 			return false;
 		let col: number[] = s.map(Number);
 		test.map.push(col);
@@ -142,6 +128,8 @@ function validLine(lineCount: number, line: string, currLine: number, maxLines: 
 			}
 			tests.push(test);
 		}
+		else
+			return (false);
 		test = {width: 0, height: 0, map: [], output: []};
 		return (true);
 	default:
@@ -151,7 +139,7 @@ function validLine(lineCount: number, line: string, currLine: number, maxLines: 
 
 function getLineType(line: string): number
 {
-	var i: number = 0;
+	let i: number = 0;
 	if (line[0] === undefined)
 		return (3);
 	if(line[0] >= '0' && line[0] <= '9')
@@ -182,8 +170,8 @@ function getLineType(line: string): number
 
 function newFindNearestWhite(testsToRun: test, point: point)
 {
-	var distance: number = Number.MAX_VALUE;
-	var sameLine: point = {x: 0, y: 0};
+	let distance: number = Number.MAX_VALUE;
+	let sameLine: point = {x: 0, y: 0};
 	
 	for(let x: number = 0; x < testsToRun.width; x++)
 	{
@@ -197,8 +185,8 @@ function newFindNearestWhite(testsToRun: test, point: point)
 			}
 		}
 	}
-	var oldDistance: number = distance;
-	var found: boolean = false;
+	let oldDistance: number = distance;
+	let found: boolean = false;
 	for(let y: number = point.y - oldDistance; y < point.y + distance; y++)
 	{
 		if (y < 0)
@@ -227,22 +215,6 @@ function newFindNearestWhite(testsToRun: test, point: point)
 		testsToRun.output[point.y][point.x] = oldDistance;
 }
 
-// function findNearestWhite(testToRun: test, point: point)
-// {
-// 	var max: number = Number.MAX_VALUE;
-// 	for (let y: number = 0; y < testToRun.height; y++)
-// 		for (let x: number = 0; x < testToRun.width; x++)
-// 			if (testToRun.map[y][x] === 1)
-// 			{
-// 				var distance: number = Math.abs(x - point.x) + Math.abs(y - point.y);
-// 				if (distance < max)
-// 				{
-// 					max = distance;
-// 					testToRun.output[point.y][point.x] = distance;
-// 				}
-// 			}
-// }
-
 function main()
 {
 	input = stdinToString().split('\n');
@@ -256,6 +228,12 @@ function main()
 			exit(1);
 		}
 	}
+	if (tests.length !== testSize || testSize > 1000)
+	{
+		console.log('ERROR: Invalid amount of tests specified at the top!');
+		exit(1);
+	}
+
 	for (let i: number = 0; i < tests.length; i++)
 	{
 		for (let y: number = 0; y < tests[i].height; y++)
