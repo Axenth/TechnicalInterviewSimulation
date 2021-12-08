@@ -5,6 +5,7 @@
 - Node.js for execution
 - tsc for compilation
 - the fs module
+- tslib
 
 ## How to run
 
